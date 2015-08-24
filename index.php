@@ -1,3 +1,10 @@
+<?php
+
+
+
+require_once 'core/init.php';
+?>
+
 <!DOCTYPE html>
 <!--
 To change this license header, choose License Headers in Project Properties.
@@ -11,7 +18,9 @@ and open the template in the editor.
     </head>
     <body>
         <?php
-        // put your code here
-        ?>
+       
+       $que= DB::getInstance()->query("SELECT * FROM users WHERE username=?",array('alex'));
+       
+       ?>
     </body>
 </html>
