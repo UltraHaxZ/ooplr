@@ -25,7 +25,7 @@ class DB {
     private function __construct() {
         try {
             $this->_pdo = new PDO('mysql:host=' . config::get('mysql/host') . ';dbname=' . config::get('mysql/DB') . ';', config::get('mysql/username'), config::get('mysql/password'));
-            echo 'connected!!';
+            
         } catch (PDOException $e) {
             die($e->getMessage());
         }
@@ -50,11 +50,46 @@ class DB {
             }
             if ($this->_quiry->execute()) {
                 $this->_result = $this->_quiry->fetchAll(PDO::FETCH_OBJ);
-                $this->_count=  $this->_quiry->rowCount();
-            }  else {
-                $this->_error=true;    
+                $this->_count = $this->_quiry->rowCount();
+            } else {
+                $this->_error = true;
             }
         }
+
+        return $this;
     }
 
+    public function action($action, $table, $where = array()) {
+        if (count($where) === 3) {
+            $operators = array('=', '<', '>', '<=', '>=');
+            $field = $where[0];
+            $operator = $where[1];
+            $value = $where[2];
+            if (in_array($operator, $operators)) {
+                $sql = "{$action} FROM {$table} WHERE {$field} {$operator} ?";
+                if (!$this->query($sql, array($value))->error()) {
+                    return $this;
+                }
+            }
+        }
+        return FALSE ;
+    }
+
+    public function get($table, $where = array()) {
+        return $this->action("SELECT *", $table, $where);
+    }
+
+    public function delete($table, $where = array()) {
+        return $this->action("DELETE", $table, $where);
+    }
+
+    public function error() {
+
+        return $this->_error;
+    }
+
+    public function count(){
+        return $this->_count;
+        
+    }
 }

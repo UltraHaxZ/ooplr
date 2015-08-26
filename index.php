@@ -19,8 +19,13 @@ and open the template in the editor.
     <body>
         <?php
        
-       $que= DB::getInstance()->query("SELECT * FROM users WHERE username=?",array('alex'));
-       
+       $que= DB::getInstance()->delete("users",array("username","=","alex"));
+if($que->count()){
+           echo'nope';
+           
+       }else {
+           echo 'naaah';
+       }
        ?>
     </body>
 </html>
