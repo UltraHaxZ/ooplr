@@ -12,5 +12,13 @@
  * @author Ultra_HaxZ
  */
 class user {
-    //put your code here
+    private $_db;
+    public function __construct($user=NULL) {
+        $this->_db = DB::getInstance();
+    }
+    public function create($usersTableName,$fields=  array()){
+        if (!$this->_db->insert($usersTableName,$fields)) {
+            throw new Exception("there was a problem adding user!");
+        }
+    }
 }

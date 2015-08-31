@@ -25,7 +25,6 @@ class DB {
     private function __construct() {
         try {
             $this->_pdo = new PDO('mysql:host=' . config::get('mysql/host') . ';dbname=' . config::get('mysql/DB') . ';', config::get('mysql/username'), config::get('mysql/password'));
-            
         } catch (PDOException $e) {
             die($e->getMessage());
         }
@@ -44,7 +43,7 @@ class DB {
             $x = 1;
             if (count($prms)) {
                 foreach ($prms as $param) {
-                    $this->_quiry->bindParam($x, $param);
+                    $this->_quiry->bindValue($x, $param);
                     $x++;
                 }
             }
@@ -72,15 +71,69 @@ class DB {
                 }
             }
         }
-        return FALSE ;
+        return FALSE;
     }
 
     public function get($table, $where = array()) {
         return $this->action("SELECT *", $table, $where);
     }
 
+    public function results() {
+        return $this->_result;
+    }
+
     public function delete($table, $where = array()) {
         return $this->action("DELETE", $table, $where);
+    }
+
+    public function insert($table, $fields = array()) {
+        if (count($fields)) {
+            $keys = array_keys($fields);
+            $values = '';
+            $x = 1;
+            foreach ($fields as $field) {
+                $values .= "?";
+
+                if ($x < count($fields)) {
+                    $values .=', ';
+                    $x++;
+                }
+            }
+            $sql = "INSERT INTO " . $table . " (`" . implode("`,`", $keys) . "`) VALUES(" . $values . ")";
+            echo $sql;
+            print_r($fields);
+            if (!$this->query($sql, $fields)->error()) {
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
+
+    public function update($table, $id, $fields) {
+        $set = '';
+        $x = 1;
+        foreach ($fields as $name => $value) {
+            $set .="{$name} = ?";
+            if ($x < count($fields)) {
+                $set .=", ";
+                $x++;
+            }
+        }
+        $sql = "UPDATE {$table} SET {$set} WHERE id = {$id}";
+        echo $sql;
+        if (!$this->query($sql, $fields)->error()) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function getId($table, $where) {
+        return $this->action("SELECT id", $table, $where);
+    }
+
+    public function first() {
+        return $this->results()[0];
     }
 
     public function error() {
@@ -88,8 +141,8 @@ class DB {
         return $this->_error;
     }
 
-    public function count(){
+    public function count() {
         return $this->_count;
-        
     }
+
 }

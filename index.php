@@ -1,7 +1,4 @@
 <?php
-
-
-
 require_once 'core/init.php';
 ?>
 
@@ -17,15 +14,13 @@ and open the template in the editor.
         <title></title>
     </head>
     <body>
-        <?php
-       
-       $que= DB::getInstance()->delete("users",array("username","=","alex"));
-if($que->count()){
-           echo'nope';
-           
-       }else {
-           echo 'naaah';
-       }
-       ?>
+<?php
+if (session::exists('success')) {
+    echo session::flash('success');
+} else {
+    $salt=  Hash::salt(255);
+    echo $salt;
+}
+?>
     </body>
 </html>

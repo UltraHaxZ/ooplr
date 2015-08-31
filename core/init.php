@@ -9,7 +9,9 @@ $GLOBALS['config'] = array(
         'DB' => 'twitterclone'
     ),
     'session' => array(
-        'session_name' => 'user'
+        'session_name' => 'user',
+        'token_name'=>'token'
+        
     ),
     'remember' => array(
         'cookie_name' => 'hash',
